@@ -1,0 +1,58 @@
+name: Dev Container build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [amd64]
+    steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Available platforms
+      run: echo ${{ steps.buildx.outputs.platforms }}
+    - name: Run Buildx
+      run: docker buildx build --platform linux/${{matrix.architecture}} -t kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7) --push . 
+    - name: Create new and append to manifest
+      run: docker buildx imagetools create -t kerberos/rtsp-simple-server:$(echo $GITHUB_SHA | cut -c1-7) kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
+    - name: Create new and append to manifest latest
+      run: docker buildx imagetools create -t kerberos/rtsp-simple-server:latest kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
+  build-other:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        #architecture: [arm64, arm/v7, arm/v6]
+        architecture: [arm64, arm/v7]
+    steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Available platforms
+      run: echo ${{ steps.buildx.outputs.platforms }}
+    - name: Run Buildx
+      run: docker buildx build --platform linux/${{matrix.architecture}} -t kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7) --push . 
+    - name: Create new and append to manifest
+      run: docker buildx imagetools create --append -t kerberos/rtsp-simple-server:$(echo $GITHUB_SHA | cut -c1-7) kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
+    - name: Create new and append to manifest latest
+      run: docker buildx imagetools create --append -t kerberos/rtsp-simple-server:latest kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
