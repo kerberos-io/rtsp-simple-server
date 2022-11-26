@@ -13,3 +13,8 @@ You can build the `Dockerfile` using the build command.
 ## Run
 
 For more information how to leverage the `rtsp-simple-server` have a look at the [`camera-to-rtsp` repository](https://github.com/kerberos-io/camera-to-rtsp), which illustrates how to convert USB and RPi cameras to a rtsp h264 stream.
+
+    docker run --network=host \
+    -d --privileged \
+    -v $PWD/rtsp-simple-server.yml:/rtsp-simple-server.yml \
+    kerberos/rtsp-simple-server
