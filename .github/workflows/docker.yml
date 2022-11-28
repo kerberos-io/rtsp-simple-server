@@ -14,7 +14,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Create new release
-      run: docker buildx imagetools create -t kerberos/rtsp-simple-server:$(echo $GITHUB_SHA | cut -c1-7) kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
+      run: docker buildx imagetools create -t kerberos/rtsp-simple-server:$(echo $GITHUB_SHA | cut -c1-7) kerberos/rtsp-simple-server:arch-$(echo $GITHUB_SHA | cut -c1-7)
   build:
     runs-on: ubuntu-latest
     strategy:
