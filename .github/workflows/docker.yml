@@ -1,4 +1,4 @@
-name: Dev Container build
+name: rtsp simple server build
 
 on:
   push:
