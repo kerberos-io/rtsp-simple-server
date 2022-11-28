@@ -30,6 +30,12 @@ jobs:
       run: docker buildx imagetools create -t kerberos/rtsp-simple-server:$(echo $GITHUB_SHA | cut -c1-7) kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
     - name: Create new and append to manifest latest
       run: docker buildx imagetools create -t kerberos/rtsp-simple-server:latest kerberos/rtsp-simple-server:arch-$(echo ${{matrix.architecture}} | tr / -)-$(echo $GITHUB_SHA | cut -c1-7)
+  delay-between:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep for 10 seconds
+        run: sleep 10s
+        shell: bash
   build-other:
     runs-on: ubuntu-latest
     strategy:
