@@ -1,0 +1,6 @@
+FROM aler9/rtsp-simple-server AS rtsp
+FROM balenalib/raspberrypi3-64:bullseye-run
+COPY --from=rtsp /rtsp-simple-server /
+RUN apt update && apt install -y --no-install-recommends libcamera0 ffmpeg
+COPY rtsp-simple-server.yml /rtsp-simple-server.yml
+ENTRYPOINT [ "/rtsp-simple-server" ]
